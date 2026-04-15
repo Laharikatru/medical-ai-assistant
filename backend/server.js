@@ -1,9 +1,17 @@
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
 let lastContext = "";
 
 app.post("/search", async (req, res) => {
   let { disease, query } = req.body;
 
-  // Context Awareness
   if (!disease && lastContext) {
     disease = lastContext;
   } else {
@@ -27,12 +35,7 @@ app.post("/search", async (req, res) => {
       console.log("Trials API failed");
     }
 
-    // 🧠 Simulated LLM Reasoning
-    const summary = `
-Based on recent research for ${disease}, several studies highlight advancements related to ${query}.
-Clinical trials indicate ongoing efforts to validate treatment effectiveness.
-This system aggregates publications and trial data to provide structured insights.
-`;
+    const summary = `Based on research for ${disease}, studies and clinical trials indicate progress in ${query}.`;
 
     res.json({
       overview: summary,
@@ -45,3 +48,5 @@ This system aggregates publications and trial data to provide structured insight
     res.status(500).json({ error: "API error" });
   }
 });
+
+app.listen(5000, () => console.log("Server running on port 5000"));
