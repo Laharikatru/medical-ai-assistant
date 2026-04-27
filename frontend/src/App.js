@@ -19,15 +19,28 @@ function App() {
       setLoading(true);
       setData(null);
 
-      const res = await axios.post(`${API_URL}/search`, {
-        disease,
-        query,
-      });
+      const res = await axios.post(
+        `${API_URL}/search`,
+        {
+          disease,
+          query,
+        },
+        {
+          timeout: 60000, // VERY IMPORTANT (Render sleep fix)
+        }
+      );
 
       setData(res.data);
     } catch (err) {
       console.error(err);
-      alert("Error fetching data");
+
+      if (err.code === "ECONNABORTED") {
+        alert("Server is waking up, please try again in a few seconds.");
+      } else if (err.response) {
+        alert(`Server error: ${err.response.status}`);
+      } else {
+        alert("Network error. Please check connection or try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -37,6 +50,7 @@ function App() {
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
       <h2>🧠 AI Medical Research Assistant</h2>
 
+      {/* Input Section */}
       <div style={{ marginBottom: "20px" }}>
         <input
           placeholder="Enter Disease (e.g. diabetes)"
@@ -57,8 +71,10 @@ function App() {
         </button>
       </div>
 
-      {loading && <p>🔄 Fetching research data...</p>}
+      {/* Loading */}
+      {loading && <p>🔄 Fetching research data... (first request may take time)</p>}
 
+      {/* Results */}
       {data && !loading && (
         <div>
           <h3>🧠 AI Overview</h3>
@@ -66,7 +82,15 @@ function App() {
 
           <h3>📚 Research Publications</h3>
           {data.publications?.slice(0, 5).map((p, i) => (
-            <div key={i} style={{ marginBottom: "10px", border: "1px solid #ccc", padding: "10px", borderRadius: "5px" }}>
+            <div
+              key={i}
+              style={{
+                marginBottom: "10px",
+                border: "1px solid #ccc",
+                padding: "10px",
+                borderRadius: "5px",
+              }}
+            >
               <p><b>{p.display_name}</b></p>
               <p>📅 Year: {p.publication_year || "N/A"}</p>
               <p>🔗 Source: OpenAlex</p>
@@ -75,9 +99,24 @@ function App() {
 
           <h3>🧪 Clinical Trials</h3>
           {data.trials?.slice(0, 5).map((t, i) => (
-            <div key={i} style={{ marginBottom: "10px", border: "1px solid #ccc", padding: "10px", borderRadius: "5px" }}>
-              <p><b>{t.protocolSection.identificationModule.briefTitle}</b></p>
-              <p>📍 Status: {t.protocolSection.statusModule.overallStatus || "N/A"}</p>
+            <div
+              key={i}
+              style={{
+                marginBottom: "10px",
+                border: "1px solid #ccc",
+                padding: "10px",
+                borderRadius: "5px",
+              }}
+            >
+              <p>
+                <b>
+                  {t.protocolSection?.identificationModule?.briefTitle || "N/A"}
+                </b>
+              </p>
+              <p>
+                📍 Status:{" "}
+                {t.protocolSection?.statusModule?.overallStatus || "N/A"}
+              </p>
               <p>🏥 Source: ClinicalTrials.gov</p>
             </div>
           ))}
