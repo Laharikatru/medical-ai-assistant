@@ -48,21 +48,13 @@ function App() {
 
   
 return (
-  <div
-    style={{
-      maxWidth: "800px",
-      margin: "auto",
-      padding: "20px",
-      fontFamily: "Arial",
-    }}
-  >
-    <h1 style={{ textAlign: "center", color: "#2a7fba" }}>
-    
-    </h1>
+  <div style={{ maxWidth: "800px", margin: "auto", padding: "20px" }}>
 
-    {/* Input Section */}      <h2>🧠 AI Medical Research Assistant</h2>
+    <h2 style={{ textAlign: "center", color: "#2a7fba", marginBottom: "20px" }}>
+      🧠 AI Medical Research Assistant
+    </h2>
 
-      {/* Input Section */}
+    {/* Input Section */}
       <div style={{ marginBottom: "20px" }}>
         <input
           placeholder="Enter Disease (e.g. diabetes)"
