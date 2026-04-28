@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 
+const API_URL = "https://medical-ai-assistant-1-kp5j.onrender.com";
+
 function App() {
   const [disease, setDisease] = useState("");
   const [query, setQuery] = useState("");
@@ -17,73 +19,119 @@ function App() {
       setLoading(true);
       setData(null);
 
-      const res = await axios.post("http://localhost:5000/search", {
-        disease,
-        query,
-      });
+      const res = await axios.post(
+        `${API_URL}/search`,
+        { disease, query },
+        { timeout: 60000 } // handle Render cold start
+      );
 
       setData(res.data);
     } catch (err) {
       console.error(err);
-      alert("Error fetching data");
+
+      if (err.code === "ECONNABORTED") {
+        alert("Server is waking up, please try again.");
+      } else if (err.response) {
+        alert(`Server error: ${err.response.status}`);
+      } else {
+        alert("Network error. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  
-return (
-  <div style={{ maxWidth: "800px", margin: "auto", padding: "20px" }}>
+  return (
+    <div
+      style={{
+        maxWidth: "800px",
+        margin: "auto",
+        padding: "20px",
+        fontFamily: "Arial",
+      }}
+    >
+      <h2
+        style={{
+          textAlign: "center",
+          color: "#2a7fba",
+          marginBottom: "20px",
+        }}
+      >
+        🧠 AI Medical Research Assistant
+      </h2>
 
-    <h2 style={{ textAlign: "center", color: "#2a7fba", marginBottom: "20px" }}>
-      🧠 AI Medical Research Assistant
-    </h2>
-
-    {/* Input Section */}
       {/* Input Section */}
-      <div style={{ marginBottom: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginBottom: "20px",
+        }}
+      >
         <input
           placeholder="Enter Disease (e.g. diabetes)"
           value={disease}
           onChange={(e) => setDisease(e.target.value)}
-          style={{ padding: "8px", marginRight: "10px", width: "250px" }}
+          style={{
+            flex: 1,
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+          }}
         />
 
         <input
           placeholder="Enter Query (e.g. treatment)"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          style={{ padding: "8px", marginRight: "10px", width: "250px" }}
+          style={{
+            flex: 1,
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+          }}
         />
 
         <button
-  onClick={handleSearch}
-  style={{
-    padding: "10px 16px",
-    backgroundColor: "#2a7fba",
-    color: "#fff",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    whiteSpace: "nowrap",
-    fontWeight: "bold",
-  }}
-  onMouseOver={(e) => (e.target.style.backgroundColor = "#1f5f8a")}
-  onMouseOut={(e) => (e.target.style.backgroundColor = "#2a7fba")}
->
-  🔍 Search
-</button>
+          onClick={handleSearch}
+          style={{
+            padding: "10px 16px",
+            backgroundColor: "#2a7fba",
+            color: "#fff",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#1f5f8a")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#2a7fba")}
+        >
+          🔍 Search
+        </button>
       </div>
 
       {/* Loading */}
-      {loading && <p>🔄 Fetching research data...</p>}
+      {loading && (
+        <p style={{ textAlign: "center" }}>
+          🔄 Fetching research data... (first request may take time)
+        </p>
+      )}
 
       {/* Results */}
       {data && !loading && (
         <div>
-          <h3>🧠 AI Overview</h3>
-<p>{data.overview}</p>
-          {/* Publications */}
+          <div
+            style={{
+              backgroundColor: "#f4f8ff",
+              padding: "15px",
+              borderRadius: "10px",
+              marginBottom: "20px",
+            }}
+          >
+            <h3>🧠 AI Overview</h3>
+            <p>{data.overview}</p>
+          </div>
+
           <h3>📚 Research Publications</h3>
           {data.publications?.slice(0, 5).map((p, i) => (
             <div
@@ -101,7 +149,6 @@ return (
             </div>
           ))}
 
-          {/* Clinical Trials */}
           <h3>🧪 Clinical Trials</h3>
           {data.trials?.slice(0, 5).map((t, i) => (
             <div
@@ -115,16 +162,27 @@ return (
             >
               <p>
                 <b>
-                  {t.protocolSection.identificationModule.briefTitle}
+                  {t.protocolSection?.identificationModule?.briefTitle || "N/A"}
                 </b>
               </p>
               <p>
                 📍 Status:{" "}
-                {t.protocolSection.statusModule.overallStatus || "N/A"}
+                {t.protocolSection?.statusModule?.overallStatus || "N/A"}
               </p>
               <p>🏥 Source: ClinicalTrials.gov</p>
             </div>
           ))}
+
+          <p
+            style={{
+              fontSize: "12px",
+              color: "gray",
+              marginTop: "20px",
+            }}
+          >
+            This tool provides research-based insights and is not a substitute
+            for professional medical advice.
+          </p>
         </div>
       )}
     </div>
