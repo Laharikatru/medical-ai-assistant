@@ -1,8 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
 
-const API_URL = "https://medical-ai-assistant-1-kp5j.onrender.com";
-
 function App() {
   const [disease, setDisease] = useState("");
   const [query, setQuery] = useState("");
@@ -19,28 +17,15 @@ function App() {
       setLoading(true);
       setData(null);
 
-      const res = await axios.post(
-        `${API_URL}/search`,
-        {
-          disease,
-          query,
-        },
-        {
-          timeout: 60000, // VERY IMPORTANT (Render sleep fix)
-        }
-      );
+      const res = await axios.post("http://localhost:5000/search", {
+        disease,
+        query,
+      });
 
       setData(res.data);
     } catch (err) {
       console.error(err);
-
-      if (err.code === "ECONNABORTED") {
-        alert("Server is waking up, please try again in a few seconds.");
-      } else if (err.response) {
-        alert(`Server error: ${err.response.status}`);
-      } else {
-        alert("Network error. Please check connection or try again.");
-      }
+      alert("Error fetching data");
     } finally {
       setLoading(false);
     }
@@ -55,6 +40,7 @@ return (
     </h2>
 
     {/* Input Section */}
+      {/* Input Section */}
       <div style={{ marginBottom: "20px" }}>
         <input
           placeholder="Enter Disease (e.g. diabetes)"
@@ -70,7 +56,7 @@ return (
           style={{ padding: "8px", marginRight: "10px", width: "250px" }}
         />
 
-       <button
+        <button
   onClick={handleSearch}
   style={{
     padding: "10px 16px",
@@ -90,14 +76,14 @@ return (
       </div>
 
       {/* Loading */}
-      {loading && <p>🔄 Fetching research data... (first request may take time)</p>}
+      {loading && <p>🔄 Fetching research data...</p>}
 
       {/* Results */}
       {data && !loading && (
         <div>
           <h3>🧠 AI Overview</h3>
-          <p>{data.overview}</p>
-
+<p>{data.overview}</p>
+          {/* Publications */}
           <h3>📚 Research Publications</h3>
           {data.publications?.slice(0, 5).map((p, i) => (
             <div
@@ -115,6 +101,7 @@ return (
             </div>
           ))}
 
+          {/* Clinical Trials */}
           <h3>🧪 Clinical Trials</h3>
           {data.trials?.slice(0, 5).map((t, i) => (
             <div
@@ -128,12 +115,12 @@ return (
             >
               <p>
                 <b>
-                  {t.protocolSection?.identificationModule?.briefTitle || "N/A"}
+                  {t.protocolSection.identificationModule.briefTitle}
                 </b>
               </p>
               <p>
                 📍 Status:{" "}
-                {t.protocolSection?.statusModule?.overallStatus || "N/A"}
+                {t.protocolSection.statusModule.overallStatus || "N/A"}
               </p>
               <p>🏥 Source: ClinicalTrials.gov</p>
             </div>
