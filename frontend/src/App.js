@@ -46,9 +46,21 @@ function App() {
     }
   };
 
-  return (
-    <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h2>🧠 AI Medical Research Assistant</h2>
+  
+return (
+  <div
+    style={{
+      maxWidth: "800px",
+      margin: "auto",
+      padding: "20px",
+      fontFamily: "Arial",
+    }}
+  >
+    <h1 style={{ textAlign: "center", color: "#2a7fba" }}>
+    
+    </h1>
+
+    {/* Input Section */}      <h2>🧠 AI Medical Research Assistant</h2>
 
       {/* Input Section */}
       <div style={{ marginBottom: "20px" }}>
@@ -66,9 +78,23 @@ function App() {
           style={{ padding: "8px", marginRight: "10px", width: "250px" }}
         />
 
-        <button onClick={handleSearch} style={{ padding: "8px 16px" }}>
-          Search
-        </button>
+       <button
+  onClick={handleSearch}
+  style={{
+    padding: "10px 16px",
+    backgroundColor: "#2a7fba",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    whiteSpace: "nowrap",
+    fontWeight: "bold",
+  }}
+  onMouseOver={(e) => (e.target.style.backgroundColor = "#1f5f8a")}
+  onMouseOut={(e) => (e.target.style.backgroundColor = "#2a7fba")}
+>
+  🔍 Search
+</button>
       </div>
 
       {/* Loading */}
