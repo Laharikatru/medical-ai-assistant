@@ -33,8 +33,44 @@ Backend:
   - Query processing
   - API integration
   - Response structuring
+ 
+  - ┌─────────────────────────────┐
+│       React Frontend         │
+│   (Chat UI + Query Input)   │
+└─────────────┬───────────────┘
+              │ REST API
+              ▼
+┌─────────────────────────────┐
+│    Node.js + Express         │
+│      (API Server)           │
+└──────┬──────────────┬───────┘
+       │              │
+       ▼              ▼
+┌───────────┐  ┌──────────────┐
+│  MongoDB  │  │   AI Engine  │
+│    (DB)   │  │  (Research)  │
+└───────────┘  └──────────────┘
 
 ---
+
+medical-ai-assistant/
+├── client/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ChatWindow.js
+│   │   │   ├── MessageInput.js
+│   │   │   └── ResponseCard.js
+│   │   ├── App.js
+│   │   └── index.js
+│   └── package.json
+├── server/
+│   ├── routes/
+│   │   └── assistant.js
+│   ├── models/
+│   │   └── Query.js
+│   ├── app.js
+│   └── package.json
+└── README.md
 
 ## 🔄 System Pipeline
 
@@ -57,17 +93,8 @@ Backend:
 
 ---
 
-## ⚙️ Tech Stack
-
-- Frontend: React
-- Backend: Node.js, Express
-- APIs:
-  - OpenAlex
-  - ClinicalTrials.gov
-- HTTP Client: Axios
-
----
-
+🛠️ Tech Stack
+LayerTechnologyFrontendReact.jsBackendNode.js + Express.jsDatabaseMongoDBAI IntegrationREST API / AI ModelStylingCSS / HTMLVersion ControlGit
 ## 📦 Installation & Setup
 
 ### Backend
